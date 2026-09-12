@@ -1,0 +1,24 @@
+# secrets
+secrets.h
+
+# PlatformIO build artefacts
+.pio/
+.vscode/.pio/
+build/
+*.bin
+*.elf
+*.map
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+*.swp
+*.swo
+*~
+.idea/
+
+# Test artefacts
+test/build/
+test/.pio/

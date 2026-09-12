@@ -1,0 +1,66 @@
+┌────────────────────────────────────────────────────────────────────┐
+         │                  PROTOTYPE BREADBOARD LAYOUT                      │
+         │                (top view, looking down at the board)              │
+         └────────────────────────────────────────────────────────────────────┘
+
+   POWER RAIL  (+3.3V)  ─────●─────●─────●─────●─────●─────●─────●──────●──
+                              │     │     │     │     │     │     │      │
+   POWER RAIL  (+5V)    ──────●─────●─────●─────●─────●─────●─────●──────●──
+                              │     │           │           │     │      │
+   POWER RAIL  (GND)     ──────●─────●─────●─────●─────●─────●─────●──────●──
+                              │     │     │     │     │     │     │      │
+   ┌────────────────┐         │     │     │     │     │     │     │      │
+   │  ESP32-WROOM-32│         │     │     │     │     │     │     │      │
+   │   DevKit v4    │   ◄──── red  yel blu  grn  org  wht  blk  brn     │
+   │                │         │     │     │     │     │     │     │      │
+   │  [USB-C]  ←host│         │     │     │     │     │     │     │      │
+   │  [EN] [BOOT]   │    ┌────┴────┐┌───┴────┐┌────┴───┐┌──┴────┐┌┴────┐ │
+   │                │    │         ││        ││        ││       ││     │ │
+   │  VIN  GND  3V3 │    │ SSD1306 ││DS3231  ││ BUZZER ││RGB LED││R307 │ │
+   │  │    │    │   │    │  OLED   ││  RTC   ││   +    ││  +    ││FP   │ │
+   │  │    │    │   │    │  0.96"  ││  module││   ─    ││  ─    ││sensor│ │
+   │  GPIO pins─────┼────►  I²C    ││  I²C   ││ GPIO25 ││ R G B ││UART │ │
+   │  (see right)   │    │ SDA SCL ││SDA SCL ││        ││26 27 14││     │ │
+   │                │    └─────────┘└────────┘└────────┘└───────┘└─────┘ │
+   └────────────────┘                                                   │
+            ▲                                                           │
+            │ USB-C to laptop for flashing                              │
+            │                                                           │
+   ═══════════════════════════════════════════════════════════════════════
+
+   JUMPER WIRES (colours are suggested, follow your own convention):
+
+   ┌─────┬──────────────────┬───────────────┬───────────────────────────────┐
+   │ Col │ From (breadboard)│ To (ESP32)    │ Purpose                       │
+   ├─────┼──────────────────┼───────────────┼───────────────────────────────┤
+   │ RED │ +3.3V rail       │ 3V3 pin       │ Power logic level             │
+   │ RED │ +3.3V rail       │ OLED VCC      │ OLED power                    │
+   │ RED │ +3.3V rail       │ DS3231 VCC    │ RTC power (also has CR2032)   │
+   │ YEL │ signal row 5     │ GPIO 21 (SDA) │ I²C data  (OLED + RTC share)  │
+   │ BLU │ signal row 5     │ GPIO 22 (SCL) │ I²C clock (OLED + RTC share)  │
+   │ GRN │ signal row 8     │ GPIO 25       │ Buzzer +                      │
+   │ ORG │ signal row 12    │ GPIO 26 (R)   │ RGB LED red                   │
+   │ WHT │ signal row 13    │ GPIO 27 (G)   │ RGB LED green                 │
+   │ BRN │ signal row 14    │ GPIO 14 (B)   │ RGB LED blue                  │
+   │ BLK │ GND rail         │ GND pin       │ Common ground                 │
+   │ BLK │ GND rail         │ OLED GND      │                               │
+   │ BLK │ GND rail         │ DS3231 GND    │                               │
+   │ BLK │ GND rail         │ R307 GND      │                               │
+   │ GRY │ signal row 18    │ GPIO 16 (RX2) │ ESP32 ← R307 TX (5V!) ⚠ divider│
+   │ PUR │ signal row 19    │ GPIO 17 (TX2) │ ESP32 → R307 RX               │
+   │ PNK │ +5V rail (USB)   │ R307 VCC      │ ⚠ R307 wants 5V, NOT 3V3     │
+   └─────┴──────────────────┴───────────────┴───────────────────────────────┘
+
+   ⚠  CRITICAL: VOLTAGE DIVIDER on R307 → ESP32 RX line
+
+        R307 TX ────┬──── 1 kΩ ────┬──── GPIO 16 (RX2)
+                    │              │
+                    │           ┌──┴──┐
+                    │           │2 kΩ │  (or 1.8 kΩ, anything 1k–2.2k)
+                    │           └─┬──┘
+                    │             │
+                    └─────────────┴────────── GND
+
+   The R307 UART line is 5V. ESP32 GPIO is 3.3V only.
+   The divider drops 5V → ~3.3V at the GPIO pin.
+   Other direction (ESP32 TX → R307 RX) is fine, both are 3.3V CMOS logic.
