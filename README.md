@@ -107,8 +107,9 @@ WIFIRESET      → clear WiFi creds (portal on next boot)
 
 ```
 school-attendance/
+├── README.md
 ├── platformio.ini             # deps, board, build flags
-├── src/
+├── src/                       # ESP32 firmware (Arduino framework, PlatformIO)
 │   ├── main.cpp               # FSM + setup/loop
 │   ├── config.h               # pins, constants, feature flags
 │   ├── state.h                # FSM enum + context
@@ -121,11 +122,19 @@ school-attendance/
 │   ├── http_client.*          # Firebase Cloud Functions client
 │   ├── ota_module.*           # ArduinoOTA
 │   └── secrets.h.template     # API keys (git-ignored when copied)
-├── docs/
+├── docs/                      # visual + reference material
+│   ├── architecture.html          ← 🌐 open in browser (system diagram)
+│   ├── schematic.excalidraw       ← ⚡ drag onto excalidraw.com (circuit)
+│   ├── breadboard.excalidraw      ← 🍞 drag onto excalidraw.com (mockup)
+│   ├── BREADBOARD_LAYOUT.txt      # ASCII wiring diagram
 │   ├── WIRING.md
 │   ├── FIREBASE_API.md
 │   └── OUTDOOR_BUILD.md
-└── README.md (this file)
+└── hardware/                  # PCB production starter
+    ├── PCB_DESIGN.md              # board spec, layer stack, BOM, fab notes
+    └── kicad/
+        ├── school-attendance.kicad_pro
+        └── main.kicad_sch
 ```
 
 ## Architectural decisions
